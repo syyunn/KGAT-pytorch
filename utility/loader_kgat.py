@@ -71,8 +71,12 @@ class DataLoaderKGAT(object):
 
 
     def load_kg(self, filename):
-        kg_data = pd.read_csv(filename, sep=' ', names=['h', 'r', 't'], engine='python')
-        kg_data = kg_data.drop_duplicates()
+        if self.args.debug == "debug":
+            kg_data = pd.read_csv(filename, sep=' ', names=['h', 'r', 't'], engine='python')
+            kg_data = kg_data.drop_duplicates()
+        else:
+            kg_data = pd.read_csv(filename, sep=' ', names=['h', 'r', 't'], engine='python')
+            kg_data = kg_data.drop_duplicates()
         return kg_data
 
 
@@ -118,6 +122,10 @@ class DataLoaderKGAT(object):
 
         self.n_kg_train = len(self.kg_train_data)
         self.n_kg_test = len(self.kg_test_data)
+
+        if self.args.debug == "debug":
+            self.kg_train_data = self.kg_train_data.sample(n=1000)
+            self.kg_test_data = self.kg_test_data.sample(n=1000)
 
         # construct kg dict
         self.train_kg_dict = collections.defaultdict(list)
