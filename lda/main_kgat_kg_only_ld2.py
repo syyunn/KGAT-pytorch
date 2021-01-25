@@ -5,7 +5,7 @@ import numpy as np
 import torch
 
 from lda.custom.utility.loader_kgat import DataLoaderKGAT
-
+from lda.custom.model.KGAT import *
 
 def train(args):
     # seed
@@ -29,6 +29,23 @@ def train(args):
 
     data = DataLoaderKGAT(args, logging)
     print(data)
+
+    if args.use_pretrain == 1:
+        user_pre_embed = torch.tensor(data.user_pre_embed)
+        item_pre_embed = torch.tensor(data.item_pre_embed)
+    else:
+        user_pre_embed, item_pre_embed = None, None
+
+    # construct model & optimizer
+    model = KGAT(
+        args,
+        data.n_entities,
+        data.n_relations,
+        user_pre_embed,
+        item_pre_embed,
+    )
+
+    print(model)
 
 
 if __name__ == "__main__":
