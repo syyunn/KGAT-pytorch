@@ -39,8 +39,8 @@ def predict(args):
     pretrained_model_path = 'trained_model/KGAT/lda/entitydim64_relationdim64_bi-interaction_64-32-16_lr0.0001_pretrain0/model_epoch{}.pth'.format(epoch)
     model = load_model(model, pretrained_model_path)
     model.to(device)
-    # if n_gpu > 1:
-    #     model = nn.parallel.DistributedDataParallel(model)
+    model.eval()
+
     logging.info(model)
 
     # move graph data to GPU
@@ -61,8 +61,6 @@ def predict(args):
         test_edges = test_edges.to(device)
     test_graph.ndata["id"] = test_nodes
     test_graph.edata["type"] = test_edges
-
-    model.eval()
 
     with torch.no_grad():
         att = model("calc_att", train_graph)
