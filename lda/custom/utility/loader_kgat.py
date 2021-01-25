@@ -74,7 +74,7 @@ class DataLoaderKGAT(object):
 
     def construct_data(self, kg_data):
         # plus inverse kg data
-        n_relations = max(kg_data["r"])
+        n_relations = max(kg_data["r"]) + 1
         print("n_relations: ", n_relations)
         reverse_kg_data = kg_data.copy()
         reverse_kg_data = reverse_kg_data.rename({"h": "t", "t": "h"}, axis="columns")
@@ -84,6 +84,7 @@ class DataLoaderKGAT(object):
         )
 
         self.n_relations = max(kg_data["r"]) + 2
+        print(n_relations)
         self.n_entities = max(max(kg_data["h"]), max(kg_data["t"])) + 1
         print("self.n_entities", self.n_entities)
 
