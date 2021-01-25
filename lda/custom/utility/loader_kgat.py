@@ -200,7 +200,7 @@ class DataLoaderKGAT(object):
             if len(sample_neg_tails) == n_sample_neg_triples:
                 break
 
-            tail = np.random.randint(low=0, high=self.n_users_entities, size=1)[0]
+            tail = np.random.randint(low=0, high=self.n_entities, size=1)[0]
             if (tail, relation) not in pos_triples and tail not in sample_neg_tails:
                 sample_neg_tails.append(tail)
         return sample_neg_tails
