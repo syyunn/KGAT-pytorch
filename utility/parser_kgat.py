@@ -10,11 +10,12 @@ def parse_kgat_args():
     parser.add_argument('--seed', type=int, default=123,
                         help='Random seed.')
 
-    parser.add_argument('--debug', type=str, default='debug',
+    parser.add_argument('--debug', type=str, default='real',
                         help='debug')
 
-    parser.add_argument('--data_name', nargs='?', default='amazon-book',
+    parser.add_argument('--data_name', nargs='?', default='lda', #amazon-book
                         help='Choose a dataset from {yelp2018, last-fm, amazon-book}')
+
     parser.add_argument('--data_dir', nargs='?', default='datasets/',
                         help='Input data path.')
 

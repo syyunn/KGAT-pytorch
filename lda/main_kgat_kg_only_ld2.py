@@ -4,6 +4,8 @@ import random
 import numpy as np
 import torch
 
+from lda.custom.utility.loader_kgat import DataLoaderKGAT
+
 
 def train(args):
     # seed
@@ -24,6 +26,9 @@ def train(args):
     print("n_gpu: ", n_gpu)
     if n_gpu > 0:
         torch.cuda.manual_seed_all(args.seed)
+
+    data = DataLoaderKGAT(args, logging)
+    print(data)
 
 
 if __name__ == "__main__":

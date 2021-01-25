@@ -14,29 +14,43 @@ select distinct general_issue_code from sample
 order by general_issue_code asc
 )
 , distinct_clients as (
-select distinct client_id from sample
+select distinct client_id as id, 'client' as entity_type from sample
 order by client_id asc 
 )
 , distinct_registrants as (
-select distinct regis_id from sample
+select distinct regis_id as id, 'registrant' as entity_type from sample
 order by regis_id asc 
+)
+, distinct_entities as (
+select * from distinct_clients 
+union all
+select * from distinct_registrants
 )
 , distinct_gic as (
 select distinct general_issue_code from sample
 order by general_issue_code asc
 )
-, distinct_registrants_w_rnum as (
-select row_number() OVER () as rnum, regis_id from distinct_registrants
+, distinct_entities_w_rnum as (
+select row_number() OVER () as rnum, id, entity_type from distinct_entities
 )
-, distinct_clients_w_rnum as (
-select row_number() OVER () as rnum, client_id from distinct_clients
-)
-, distinct_gic_w_rnum as (
+, distinct_gic_w_rnum_original as (
 select row_number() OVER () as rnum, general_issue_code from distinct_gic
 )
-select cr.rnum as client_rnum, gicr.rnum as gic_rnum, rr.rnum as regis_rnum from sample s
-	inner join distinct_clients_w_rnum cr on cr.client_id = s.client_id
-	inner join distinct_registrants_w_rnum rr on rr.regis_id = s.regis_id
+, distinct_gic_w_rnum as (
+select (rnum - 1) as rnum, general_issue_code from distinct_gic_w_rnum_original
+)
+, distinct_client_w_rnum as (
+select distinct (rnum-1) as rnum, id, entity_type from distinct_entities_w_rnum
+where entity_type = 'client'
+)
+, distinct_regis_w_rnum as (
+select distinct (rnum-1) as rnum, id, entity_type from distinct_entities_w_rnum
+where entity_type = 'registrant'
+)
+select cr.rnum as client_rnum, gicr.rnum as gic_rnum, rr.rnum as regis_rnum -- , s.client, s.regis, s.client_id, s.regis_id
+from sample s
+	inner join distinct_client_w_rnum cr on cr.id = s.client_id
+	inner join distinct_regis_w_rnum rr on rr.id = s.regis_id
 	inner join distinct_gic_w_rnum gicr on gicr.general_issue_code = s.general_issue_code	
 """
 
@@ -46,9 +60,8 @@ df = select_data_from_postgres(conn, query)
 import os
 import numpy as np
 
-prefix = "/tmp/pycharm_project_478/lda/ld2/"
-np.savetxt(os.path.join(prefix, "kg_final_ld2.txt"), df.values, fmt="%d")
+prefix = "/tmp/pycharm_project_478/datasets/lda"
+np.savetxt(os.path.join(prefix, "kg_final.txt"), df.values, fmt="%d")
 
 if __name__ == "__main__":
     pass
-
