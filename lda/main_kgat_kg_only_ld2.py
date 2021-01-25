@@ -9,6 +9,8 @@ from time import time
 
 from lda.custom.utility.loader_kgat import DataLoaderKGAT
 from lda.custom.model.KGAT import *
+from utility.helper import *
+
 
 def train(args):
     # seed
@@ -145,6 +147,12 @@ def train(args):
                 epoch, n_kg_batch, time() - time1, kg_total_loss / n_kg_batch
             )
         )
+
+    # evaluate cf
+    if (epoch % args.evaluate_every) == 0:
+        # save model
+        print(args.save_dir)
+        save_model(model, args.save_dir, epoch)
 
 
 if __name__ == "__main__":

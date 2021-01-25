@@ -38,6 +38,7 @@ def save_model(model, model_dir, current_epoch, last_best_epoch=None):
         os.makedirs(model_dir)
     model_state_file = os.path.join(model_dir, 'model_epoch{}.pth'.format(current_epoch))
     torch.save({'model_state_dict': model.state_dict(), 'epoch': current_epoch}, model_state_file)
+    print([i for i in list(model.state_dict())])
 
     if last_best_epoch is not None and current_epoch != last_best_epoch:
         old_model_state_file = os.path.join(model_dir, 'model_epoch{}.pth'.format(last_best_epoch))
